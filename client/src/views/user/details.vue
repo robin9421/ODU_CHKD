@@ -44,6 +44,7 @@
                 </v-col>
               </v-row>
             </v-container>
+           
 
             <!-- ----------------dialog for delete item----------------- -->
             <v-dialog v-model="dialogDelete" max-width="500px">
@@ -72,18 +73,13 @@
                   >Update the Status here</v-card-title
                 >
                 <v-card-text>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="12"
-                  >
+                  <v-col cols="12" sm="6" md="12">
                     <v-autocomplete
                       label="Change Status"
                       :items="changeStatusItems"
                       v-model="statusItem"
                     ></v-autocomplete>
                   </v-col>
- 
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
@@ -99,6 +95,7 @@
             </v-dialog>
             <!------------------------------------------>
           </template>
+          
           <template v-slot:item.date="{ item }">
             {{ item.date | formatDate }}
           </template>
@@ -117,8 +114,17 @@
 
           <!-- -------------------status----------------------- -->
           <template v-slot:item.status="{ item }">
-            <v-btn small elevation="2" class="primary" @click="changeStatus(item)">Change</v-btn>
+            <v-btn
+              small
+              elevation="2"
+              class="primary"
+              @click="changeStatus(item)"
+              >Change</v-btn
+            >
           </template>
+          <!-- <template v-slot:header="{ item }">
+            <v-icon class="mr-2" color="primary" small>mdi-pencil</v-icon>
+          </template> -->
           <!-- ------------------------------------------ -->
 
           <template v-slot:expanded-item="{ headers, item }">
@@ -146,38 +152,62 @@
                 <!-- -----------------steppers--------------------- -->
                 <v-col cols="12" md="8">
                   <template>
-                    <v-stepper v-model="e1" class="ma-5">
-                      <v-stepper-header>
-                        <v-stepper-step :complete="e1 > 1" step="1">
-                          Surgery scheduled
-                        </v-stepper-step>
+                    <v-card>
+                      <v-row align="center">
+                        <v-col cols="12" md="12" style="text-align:center;">
+                          <v-card-title>
+                            Surgery state of {{ item.patient.name }}
+                          </v-card-title>
+                        </v-col>
+                        <v-col cols="12" md="12">
+                          <v-card-text>
+                            <v-stepper v-model="item.status" class="ma-5">
+                              <v-stepper-header>
+                                <v-stepper-step
+                                  :complete="item.status > 1"
+                                  step="1"
+                                >
+                                  Surgery scheduled
+                                </v-stepper-step>
 
-                        <v-divider></v-divider>
+                                <v-divider></v-divider>
 
-                        <v-stepper-step :complete="e1 > 2" step="2">
-                          Patient Checked In
-                        </v-stepper-step>
+                                <v-stepper-step
+                                  :complete="item.status > 2"
+                                  step="2"
+                                >
+                                  Patient Checked In
+                                </v-stepper-step>
 
-                        <v-divider></v-divider>
+                                <v-divider></v-divider>
 
-                        <v-stepper-step step="3" :complete="e1 > 3">
-                          Patient in Surgery
-                        </v-stepper-step>
+                                <v-stepper-step
+                                  :complete="item.status > 3"
+                                  step="3"
+                                >
+                                  Patient in Surgery
+                                </v-stepper-step>
 
-                        <v-divider></v-divider>
+                                <v-divider></v-divider>
 
-                        <v-stepper-step step="4" :complete="e1 > 4">
-                          Patient Post Surgery
-                        </v-stepper-step>
+                                <v-stepper-step
+                                  step="4"
+                                  :complete="item.status > 4"
+                                >
+                                  Patient Post Surgery
+                                </v-stepper-step>
 
-                        <v-divider></v-divider>
+                                <v-divider></v-divider>
 
-                        <v-stepper-step step="5" :complete="e1 = 5">
-                          Patient Discharged
-                        </v-stepper-step>
-                      </v-stepper-header>
+                                <v-stepper-step
+                                  step="5"
+                                  :complete="item.status >= 5"
+                                >
+                                  Patient Discharged
+                                </v-stepper-step>
+                              </v-stepper-header>
 
-                      <!-- <v-stepper-items>
+                              <!-- <v-stepper-items>
                         <v-stepper-content step="1">
                           <v-card
                             class="mb-12"
@@ -220,7 +250,11 @@
                           <v-btn text> Cancel </v-btn>
                         </v-stepper-content>
                       </v-stepper-items> -->
-                    </v-stepper>
+                            </v-stepper>
+                          </v-card-text>
+                        </v-col>
+                      </v-row>
+                    </v-card>
                   </template>
                 </v-col>
                 <!-- -------------------steppers----------------------->
@@ -240,12 +274,17 @@ export default {
   data() {
     return {
       surgeries: [],
-      changeStatusItems: ['Patient checked In' ,'Patient in Surgery', 'Patient Post Surgery', 'Patient Discharged'],
+      changeStatusItems: [
+        "Patient checked In",
+        "Patient in Surgery",
+        "Patient Post Surgery",
+        "Patient Discharged",
+      ],
       dialog: false,
       itemToBeDeleted: {},
       itemWithStatusToBeUpdated: {},
       statusItem: "",
-      e1: 1,
+      e1: 0,
       dialogDelete: false,
       role: "",
       singleExpand: false,
@@ -256,10 +295,10 @@ export default {
       ],
       search: "",
       header: [
+        
         {
           text: "Patient Name",
           value: "patient.name",
-          align: "start",
           sortable: false,
         },
         {
@@ -319,7 +358,9 @@ export default {
           //     this.header.splice(5);
           // }
           this.surgeries = response.data;
+          console.log("++++++++++");
           console.log(this.surgeries);
+          console.log("$$$$$$$$$$$$$");
         })
         .catch((err) => {
           this.surgeries = err.data;
@@ -330,8 +371,7 @@ export default {
     closeStatus() {
       this.dialog = false;
     },
-    changeStatus(item)
-    {
+    changeStatus(item) {
       this.dialog = true;
       this.itemWithStatusToBeUpdated = item;
     },
@@ -339,37 +379,34 @@ export default {
       console.log("______________");
       console.log(this.statusItem);
       console.log("______________");
-      if(this.statusItem == 'Patient checked In'){
-        this.e1 = 2
-      } else if (this.statusItem == 'Patient in Surgery'){
-        this.e1 = 3
-      } else if (this.statusItem == 'Patient Post Surgery'){
-        this.e1 = 4
-      } else if (this.statusItem == 'Patient Discharged'){
-        this.e1 = 5
+      if (this.statusItem == "Patient checked In") {
+        this.e1 = 2;
+      } else if (this.statusItem == "Patient in Surgery") {
+        this.e1 = 3;
+      } else if (this.statusItem == "Patient Post Surgery") {
+        this.e1 = 4;
+      } else if (this.statusItem == "Patient Discharged") {
+        this.e1 = 5;
       }
       console.log("_+++++++++");
       console.log(this.e1);
       console.log("_++++++++++++");
       axios()
         .post(`/user/getSurgery/${this.itemWithStatusToBeUpdated._id}`, {
-          type: this.itemWithStatusToBeUpdated.type,
-          cordinator: this.itemWithStatusToBeUpdated.cordinator,
-          patient: this.itemWithStatusToBeUpdated.patient,
-          venue: this.itemWithStatusToBeUpdated.venue,
-          prescription: this.itemWithStatusToBeUpdated.prescription,
-          Instructions: this.itemWithStatusToBeUpdated.Instructions,
-          time: this.itemWithStatusToBeUpdated.time,
-          date: this.itemWithStatusToBeUpdated.date,
           status: this.e1,
         })
         .then((response) => {
-          console.log("+++++++++");
-          console.log(response.data);
-          console.log("++++++++++");
+          axios()
+            .get("/user/getAllSurgeries")
+            .then((response) => {
+              this.surgeries = response.data;
+            })
+            .catch((err) => {
+              this.surgeries = err.data;
+            });
         })
         .catch((err) => {
-          console.log(err)
+          console.log(err);
         });
       this.dialog = false;
     },
@@ -384,25 +421,26 @@ export default {
       console.log("+++++++++++++");
       console.log(this.itemToBeDeleted);
       console.log("+++++++++++++");
-        axios()
-          .get(`/user/deleteSurgery/${this.itemToBeDeleted._id}`)
-          .then((response) => {
-            var index = this.surgeries.indexOf(item);
-            this.surgeries.splice(index, 1);
-            this.snackbar = true;
-            this.message = "Deleted";
-            this.color = "success";
-          })
-          .catch((err) => {
-            this.snackbar = true;
-            this.message = "Cannot Delete";
-            this.color = "error";
-          });
-          this.dialogDelete = false;
+      this.surgeries.splice(this.itemToBeDeleted, 1);
+      axios()
+        .get(`/user/deleteSurgery/${this.itemToBeDeleted._id}`)
+        .then((response) => {
+          var index = this.surgeries.indexOf(item);
+          this.surgeries.splice(index, 1);
+          this.snackbar = true;
+          this.message = "Deleted";
+          this.color = "success";
+        })
+        .catch((err) => {
+          this.snackbar = true;
+          this.message = "Cannot Delete";
+          this.color = "error";
+        });
+      this.dialogDelete = false;
     },
     cancelDelete() {
       this.dialogDelete = false;
-    }
+    },
   },
 };
 </script>

@@ -37,7 +37,7 @@ var surgerySchema = new mongoose.Schema({
         required: true
     },
     status: {
-        type: Number,
+        type: Object,
         required: true
     }
 })

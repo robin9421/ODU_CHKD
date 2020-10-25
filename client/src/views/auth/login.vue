@@ -91,7 +91,7 @@ export default {
           if (this.$store.getters.role == "Patient") {
             this.$router.push("/user/profile/change");
           } else if (this.$store.getters.role == "Pre Op Coordinator") {
-            this.$router.push("/user/profile/change");
+            this.$router.push("/user/profile/surgeryDetails");
           }  
           else {
             this.$router.push("/user/profile/surgeryDetails");

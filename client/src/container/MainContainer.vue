@@ -2,10 +2,15 @@
   <v-app>
     <v-app-bar class="orange" dark app>
       <v-app-bar-nav-icon large @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title style="width: 100%">
+      <v-toolbar-side-icon>
+        <v-img height="100" width="100" src="../assets/logo.png"></v-img>
+      </v-toolbar-side-icon>
+      <v-toolbar-title>
         <span class="font-weight-bold">CHKD</span>
-        <span class="font-weight-light">App</span>
       </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-toolbar-items class="mb-5">
+
       <v-container v-if="isAuth" style="text-align: right !important">
         <v-container v-if="user == 'Admin'">
           <v-btn text class="mr-5" to="/user/profile/addUser"
@@ -19,12 +24,12 @@
               <v-icon>mdi-account-details</v-icon>
             </span></v-btn
           >
-          <v-btn text class="mr-5" to="/user/profile/addSurgery"
+          <!-- <v-btn text class="mr-5" to="/user/profile/addSurgery"
             >Add Surgery
             <span style="margin-left: 5px" left>
               <v-icon>mdi-clipboard-plus</v-icon>
             </span></v-btn
-          >
+          > -->
           <v-btn text class="mr-5" to="/user/profile/surgeryDetails"
             >Surgery Details
             <span style="margin-left: 5px" left>
@@ -111,9 +116,9 @@
                   >
                     <v-list-item-title>Surgery Details</v-list-item-title>
                   </v-list-item>
-                  <v-list-item link to="/user/profile/addSurgery" v-if="isAuth">
+                  <!-- <v-list-item link to="/user/profile/addSurgery" v-if="isAuth">
                     <v-list-item-title>Create Surgery</v-list-item-title>
-                  </v-list-item>
+                  </v-list-item> -->
                   <v-list-item link @click="logout" v-if="isAuth">
                     <v-list-item-title>
                       Sign out<span
@@ -127,6 +132,7 @@
           </v-row>
         </v-container>
       </v-container>
+      </v-toolbar-items>
       <!-- <v-conatiner v-else>
         <v-btn
           style="text-align: right !important"

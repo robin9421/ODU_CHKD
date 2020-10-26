@@ -9,9 +9,7 @@
         <span class="font-weight-bold">CHKD</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-toolbar-items class="mb-5">
-
-      <v-container v-if="isAuth" style="text-align: right !important">
+      <v-toolbar-items class="mb-1 mt-2" v-if="isAuth" style="text-align: right !important">
         <v-container v-if="user == 'Admin'">
           <v-btn text class="mr-5" to="/user/profile/addUser"
             >Add User<span style="margin-left: 5px" left>
@@ -48,9 +46,20 @@
             </span>
           </v-btn>
         </v-container>
-        <v-container v-else-if="user == 'Patient'">
-          <v-row justify="center">
-            <v-col>
+      </v-toolbar-items>
+      <v-toolbar-items v-if="isAuth" style="text-align: right !important">
+        <v-container v-if="user == 'Patient'">
+          <v-btn text class="mr-5" to="/user/profile/userStatusCheck"
+            >Ongoing Surgeries<span style="margin-left: 5px" left>
+              <v-icon>mdi-account-plus</v-icon>
+            </span></v-btn
+          >
+          <v-btn text class="mr-5" to="/user/profile/surgeryDetails"
+            >Past Surgeries
+            <span style="margin-left: 5px" left>
+              <v-icon>mdi-account-details</v-icon>
+            </span></v-btn
+          >
               <v-menu offset-y>
                 <template v-slot:activator="{ on, attrs }">
                   <v-icon
@@ -68,13 +77,13 @@
                   <v-list-item link to="/user/profile/change" v-if="isAuth">
                     <v-list-item-title>Edit Profile</v-list-item-title>
                   </v-list-item>
-                  <v-list-item
+                  <!-- <v-list-item
                     link
                     to="/user/profile/surgeryDetails"
                     v-if="isAuth"
                   >
                     <v-list-item-title>Surgery Details</v-list-item-title>
-                  </v-list-item>
+                  </v-list-item> -->
                   <v-list-item link @click="logout" v-if="isAuth">
                     <v-list-item-title>
                       Sign out<span
@@ -84,12 +93,14 @@
                   </v-list-item>
                 </v-list>
               </v-menu>
-            </v-col>
-          </v-row>
         </v-container>
 
+      </v-toolbar-items>
+          
+
         <!-- Pre Op cordinator menu--------------- -->
-        <v-container v-else>
+        <v-toolbar-items class="mb-5" v-if="isAuth" style="text-align: right !important">
+        <v-container v-if="user == 'Pre Op Coordinator'">
           <v-row justify="center">
             <v-col>
               <v-menu offset-y>
@@ -130,7 +141,6 @@
               </v-menu>
             </v-col>
           </v-row>
-        </v-container>
       </v-container>
       </v-toolbar-items>
       <!-- <v-conatiner v-else>

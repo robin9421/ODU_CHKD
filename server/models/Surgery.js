@@ -39,6 +39,10 @@ var surgerySchema = new mongoose.Schema({
     status: {
         type: Object,
         required: true
+    },
+    statusItem: {
+        type: String,
+        required: true
     }
 })
 

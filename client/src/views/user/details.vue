@@ -12,6 +12,14 @@
           class="elevation-5"
           :search="search"
         >
+          <!-- <template slot="header" class="v-data-table-header">
+            <tr>
+              <th>
+                <v-btn><v-icon>mdi-pencil</v-icon></v-btn>
+              </th>
+            </tr>
+          </template> -->
+
           <template v-slot:top>
             <v-container>
               <v-row>
@@ -162,6 +170,7 @@
                             <v-text-field
                               v-model="date"
                               label="Select date*"
+                              outlined
                               prepend-icon="mdi-calendar"
                               readonly
                               v-bind="attrs"
@@ -199,7 +208,8 @@
                           <template v-slot:activator="{ on, attrs }">
                             <v-text-field
                               v-model="time"
-                              label="Picker in dialog*"
+                              label="Select Time*"
+                              outlined
                               prepend-icon="mdi-clock-time-four-outline"
                               readonly
                               v-bind="attrs"
@@ -226,21 +236,21 @@
                         </v-dialog>
                       </v-col>
                       <v-col cols="12" sm="6" md="6">
-                          <v-textarea
-                            label="Prescription*"
-                            type="text"
-                            background-color="grey lighten-2"
-                            v-model="prescription"
-                          ></v-textarea>
-                        </v-col>
-                        <v-col cols="12" sm="6" md="6">
-                          <v-textarea
-                            label="Surgery Instructions*"
-                            type="text"
-                            background-color="grey lighten-2"
-                            v-model="Instructions"
-                          ></v-textarea>
-                        </v-col>
+                        <v-textarea
+                          label="Prescription*"
+                          type="text"
+                          background-color="grey lighten-2"
+                          v-model="prescription"
+                        ></v-textarea>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="6">
+                        <v-textarea
+                          label="Surgery Instructions*"
+                          type="text"
+                          background-color="grey lighten-2"
+                          v-model="Instructions"
+                        ></v-textarea>
+                      </v-col>
                       <v-snackbar
                         v-model="snackbar"
                         top
@@ -255,9 +265,7 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue" @click="dialogEdit = false">
-                    Close
-                  </v-btn>
+                  <v-btn color="blue" @click="cancelEdit"> Close </v-btn>
                   <v-btn color="blue" :loading="isLoading" @click="confirmEdit">
                     Edit
                   </v-btn>
@@ -285,8 +293,20 @@
                             item-text="name"
                             v-model="patient"
                             item-value="_id"
+                            required
                           ></v-autocomplete>
                         </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                          <v-text-field
+                            outlined
+                            label="Enter patient ID*"
+                            item-text="name"
+                            required
+                          ></v-text-field>
+                        </v-col>
+                        
+                      </v-row>
+                      <v-row>
                         <v-col cols="12" sm="6" md="4">
                           <v-autocomplete
                             :items="venues"
@@ -317,7 +337,7 @@
                         <v-col cols="12" sm="6" md="4">
                           <v-menu
                             ref="menu"
-                            v-model="menu"
+                            v-model="menu5"
                             :close-on-content-click="false"
                             :return-value.sync="date"
                             transition="scale-transition"
@@ -328,6 +348,7 @@
                               <v-text-field
                                 v-model="date"
                                 label="Select date*"
+                                outlined
                                 prepend-icon="mdi-calendar"
                                 readonly
                                 v-bind="attrs"
@@ -341,7 +362,11 @@
                               scrollable
                             >
                               <v-spacer></v-spacer>
-                              <v-btn text color="primary" @click="menu = false">
+                              <v-btn
+                                text
+                                color="primary"
+                                @click="menu5 = false"
+                              >
                                 Cancel
                               </v-btn>
                               <v-btn
@@ -365,9 +390,10 @@
                             <template v-slot:activator="{ on, attrs }">
                               <v-text-field
                                 v-model="time"
-                                label="Picker in dialog*"
+                                label="Select Time*"
                                 prepend-icon="mdi-clock-time-four-outline"
                                 readonly
+                                outlined
                                 v-bind="attrs"
                                 v-on="on"
                               ></v-text-field>
@@ -420,16 +446,14 @@
                         :color="color"
                         :timeout="3000"
                         :vertical="vertical"
-                        >{{ message }}</v-snackbar>
+                        >{{ message }}</v-snackbar
+                      >
                     </v-container>
                   </v-form>
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn
-                    color="primary"
-                    @click="dialogAddSurgery = false"
-                  >
+                  <v-btn color="primary" @click="dialogAddSurgery = false">
                     Close
                   </v-btn>
                   <v-btn
@@ -460,6 +484,10 @@
             <v-icon color="error" @click="deleteItem(item)" class="mr-2"
               >mdi-delete</v-icon
             >
+          </template>
+
+          <template v-slot:item.currentStatus="{ item }">
+            {{ item.statusItem }}
           </template>
 
           <!-- -------------------status----------------------- -->
@@ -604,11 +632,13 @@
         </v-data-table>
       </v-col>
     </v-row>
-    <v-fab-transition>
-      <v-btn fab fixed large dark bottom right class="primary" @click="add">
-        <v-icon>mdi-plus</v-icon>
-      </v-btn>
-    </v-fab-transition>
+    <div v-if="role == 'Admin' || role == 'Pre Op Cordinator'">
+      <v-fab-transition>
+        <v-btn fab fixed large dark bottom right class="primary" @click="add">
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+      </v-fab-transition>
+    </div>
   </v-container>
 </template>
              
@@ -639,7 +669,7 @@ export default {
       dialog: false,
       itemToBeDeleted: {},
       itemWithStatusToBeUpdated: {},
-      statusItem: "",
+      statusItem: "Surgery Scheduled",
       dialogDelete: false,
       dialogEdit: false,
       role: "",
@@ -656,6 +686,7 @@ export default {
       modal2: false,
       prescription: "",
       menu: false,
+      menu5: false,
       Instructions: "",
       roles: ["Admin", "Patient", "Pre Op Coordinator"],
       vertical: true,
@@ -676,7 +707,6 @@ export default {
         {
           text: "Patient Name",
           value: "patient.name",
-          sortable: false,
         },
         {
           text: "Doctor Name",
@@ -695,15 +725,22 @@ export default {
           value: "time",
         },
         {
+          text: "Current Status",
+          value: "statusItem",
+          sortable: false,
+        },
+        {
           text: "Status",
           value: "status",
+          sortable: false,
         },
         {
           text: "Actions",
           value: "actions",
+          sortable: false,
         },
         {
-          text: `pencil`,
+          text: "",
           value: "data-table-expand",
         },
       ],
@@ -734,7 +771,11 @@ export default {
           console.log("+++++++++");
           console.log(response.data);
           console.log("++++++++++");
-          this.surgeries = response.data;
+          for (var i = 0; i < response.data.length; i++) {
+          if (response.data[i].statusItem == "Patient Discharged") {
+            this.surgeries.push(response.data[i]);
+          }
+        }
         })
         .catch((err) => {
           this.surgeries = err.data;
@@ -776,8 +817,17 @@ export default {
           Instructions: this.Instructions,
           venue: this.venue,
           status: this.testStates,
+          statusItem: this.statusItem,
         })
         .then((response) => {
+          this.doctor = "";
+          this.patient = "";
+          this.type = "";
+          this.date = "";
+          this.time = "";
+          this.prescription = "";
+          this.Instructions = "";
+          this.venue = "";
           axios()
             .get("/user/getAllSurgeries")
             .then((response) => {
@@ -846,6 +896,7 @@ export default {
       axios()
         .post(`/user/getSurgery/${this.itemWithStatusToBeUpdated._id}`, {
           status: this.testStates,
+          statusItem: this.statusItem,
         })
         .then((response) => {
           axios()
@@ -893,6 +944,17 @@ export default {
     cancelDelete() {
       this.dialogDelete = false;
     },
+    cancelEdit() {
+      this.doctor = "";
+      this.patient = "";
+      this.type = "";
+      this.date = "";
+      this.time = "";
+      this.prescription = "";
+      this.Instructions = "";
+      this.venue = "";
+      this.dialogEdit = false;
+    },
     confirmDialogEdit(currentItem) {
       this.itemToBeEditId = currentItem._id;
       this.prescription = currentItem.prescription;
@@ -918,6 +980,14 @@ export default {
           venue: this.venue,
         })
         .then((response) => {
+          this.doctor = "";
+          this.patient = "";
+          this.type = "";
+          this.date = "";
+          this.time = "";
+          this.prescription = "";
+          this.Instructions = "";
+          this.venue = "";
           axios()
             .get("/user/getAllSurgeries")
             .then((response) => {

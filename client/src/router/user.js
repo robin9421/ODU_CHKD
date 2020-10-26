@@ -10,6 +10,7 @@ import DetailSurgery from '../views/user/details'
 import Change from '../views/user/changePass'
 import EditSurgery from '../views/user/editSurgery'
 import demo from '../views/user/demo'
+import userStatusCheck from '../views/user/userStatusCheck'
 
 export default {
     path: '/user',
@@ -45,7 +46,11 @@ export default {
                 {
                     path: '/user/profile/surgeryDetails/edit/:id',
                     component: EditSurgery
-                }
+                },
+                {
+                    path: '/user/profile/userStatusCheck',
+                    component: userStatusCheck
+                },
             ]
         },
 

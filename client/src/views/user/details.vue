@@ -87,6 +87,88 @@
                 <v-card-title class="headline"
                   >Update the Status here</v-card-title
                 >
+                <!-- <v-container>
+                  <v-row align="center" justify="center">
+                    <template v-for="selection in statusChangingByClick.status">
+                      <div>
+                          <div v-if="selection.value == 0" style="margin-right:100px;">
+                            <v-btn
+                              style="
+                                background-color: mediumseagreen;
+                                padding: 2px;
+                                border-radius: 50%;
+                                color: white;
+                              "
+                              height="50"
+                              small
+                              ><v-icon large
+                                >mdi-checkbox-marked-circle-outline</v-icon
+                              >
+                            </v-btn>
+                          </div>
+                          <div v-else-if="selection.value == 1" style="margin-right:100px;">
+                            <v-btn
+                              style="
+                                background-color: dodgerblue;
+                                padding: 2px;
+                                border-radius: 50%;
+                                color: white;
+                              "
+                              height="50"
+                              small
+                              ><v-icon large>mdi-bullseye</v-icon></v-btn
+                            >
+                          </div>
+
+                          <div v-else-if="selection.value == 2" style="margin-right:100px;">
+                            <v-btn
+                              style="
+                                background-color: darkgray;
+                                padding: 2px;
+                                border-radius: 50%;
+                              "
+                              height="50"
+                              small
+                            >
+                            </v-btn>
+                          </div>
+                          
+                      </div>
+                    </template>
+                  </v-row>
+                </v-container>
+                <v-container>
+                  <v-row justify="center">
+                    <v-col cols="12" md="2">
+                      <h1>Surgery Scheduled</h1>
+                    </v-col>
+                    <v-col cols="12" md="2">
+                      <h1></h1>
+                    </v-col>
+                    <v-col cols="12" md="2">
+                      <h1>hello</h1>
+                    </v-col>
+                    <v-col cols="12" md="2">
+                      <h1>hello</h1>
+                    </v-col>
+                    <v-col cols="12" md="2">
+                      <h1>hello</h1>
+                    </v-col>
+                    
+                    
+                  </v-row>
+                </v-container>
+
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" text @click="closeStatus"
+                    >Cancel</v-btn
+                  >
+                  <v-btn color="blue darken-1" text @click="updateStatusCode"
+                    >Update</v-btn
+                  >
+                  <v-spacer></v-spacer>
+                </v-card-actions> -->
                 <v-card-text>
                   <v-col cols="12" sm="6" md="12">
                     <v-autocomplete
@@ -299,12 +381,53 @@
                         <v-col cols="12" sm="6" md="4">
                           <v-text-field
                             outlined
-                            label="Enter patient ID*"
-                            item-text="name"
+                            label="Enter patient Phone number*"
+                            v-model="patientID"
+                            :maxlength="14"
+                            type="text"
+                            @input="acceptNumber"
                             required
                           ></v-text-field>
                         </v-col>
-                        
+                        <v-col
+                          cols="12"
+                          sm="6"
+                          md="4"
+                          v-if="addThePatient == false"
+                        >
+                          <v-btn class="primary" :disabled="true"
+                            >Add Patient</v-btn
+                          >
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          sm="6"
+                          md="4"
+                          v-if="addThePatient == true"
+                        >
+                          <v-btn class="primary">Add Patient</v-btn>
+                        </v-col>
+                      </v-row>
+                      <v-row v-if="patientAlreadyThere == true">
+                        <v-col cols="12" sm="6" md="4">
+                          <v-text-field
+                            outlined
+                            label="Patient Name*"
+                            v-model="patientName"
+                            :disabled="true"
+                            required
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                          <v-text-field
+                            outlined
+                            label="Patient Age*"
+                            v-model="patientAge"
+                            type="number"
+                            :disabled="true"
+                            required
+                          ></v-text-field>
+                        </v-col>
                       </v-row>
                       <v-row>
                         <v-col cols="12" sm="6" md="4">
@@ -493,11 +616,9 @@
           <!-- -------------------status----------------------- -->
           <template v-slot:item.status="{ item }">
             <v-btn
-              small
-              elevation="2"
-              class="primary"
+              text
               @click="changeStatus(item)"
-              >Change</v-btn
+              ><v-icon color="primary">mdi-update</v-icon></v-btn
             >
           </template>
           <!------------------------------------------------>
@@ -555,7 +676,7 @@
                                   <v-icon
                                     color="white"
                                     style="
-                                      background-color: mediumseagreen;
+                                      background-color: dodgerblue;
                                       padding: 2px;
                                       border-radius: 20px;
                                     "
@@ -574,7 +695,7 @@
                                   <v-icon
                                     color="white"
                                     style="
-                                      background-color: dodgerblue;
+                                      background-color: mediumseagreen;
                                       padding: 2px;
                                       border-radius: 20px;
                                     "
@@ -613,9 +734,11 @@
                           <v-col cols="12" md="12">
                             <HVStateStepper
                               :states="item.status"
-                              current-color="green"
+                              current-color="blue"
+                              current-divider-color="darkgray"
+                              previous-divider-color="mediumseagreen"
                               current-icon="mdi-bullseye"
-                              previous-color="blue"
+                              previous-color="green"
                               previous-icon="mdi-checkbox-marked-circle-outline"
                             />
                           </v-col>
@@ -652,6 +775,12 @@ export default {
   },
   data() {
     return {
+      statusChangingByClick: [],
+      patientID: "",
+      patientAlreadyThere: false,
+      addThePatient: false,
+      patientName: "",
+      patientAge: "",
       surgeries: [],
       testStates: [
         { name: "Surgery Scheduled", current: "true" },
@@ -730,7 +859,7 @@ export default {
           sortable: false,
         },
         {
-          text: "Status",
+          text: "Update Status",
           value: "status",
           sortable: false,
         },
@@ -745,6 +874,32 @@ export default {
         },
       ],
     };
+  },
+  watch: {
+    patientID: function (value) {
+      console.log("************");
+      console.log(value);
+      console.log("***********");
+      axios()
+        .get(`/user/getPatient/${value}`)
+        .then((response) => {
+          console.log("^^^^^^^^");
+          console.log(response.data);
+          this.patientAlreadyThere = true;
+          this.addThePatient = false;
+          this.patientName = response.data.name;
+          this.patientAge = response.data.age;
+
+          console.log("^^^^^^^^");
+        })
+        .catch((err) => {
+          this.addThePatient = true;
+          this.patientAlreadyThere = false;
+          this.patientName = "";
+          this.patientAge = "";
+          console.log(err);
+        });
+    },
   },
   created() {
     // Adding user---------------
@@ -772,10 +927,10 @@ export default {
           console.log(response.data);
           console.log("++++++++++");
           for (var i = 0; i < response.data.length; i++) {
-          if (response.data[i].statusItem == "Patient Discharged") {
-            this.surgeries.push(response.data[i]);
+            if (response.data[i].statusItem == "Patient Discharged") {
+              this.surgeries.push(response.data[i]);
+            }
           }
-        }
         })
         .catch((err) => {
           this.surgeries = err.data;
@@ -800,6 +955,15 @@ export default {
     }
   },
   methods: {
+    acceptNumber() {
+      var x = this.patientID
+        .replace(/\D/g, "")
+        .match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+      this.patientID = !x[2]
+        ? x[1]
+        : "(" + x[1] + ") " + x[2] + (x[3] ? "-" + x[3] : "");
+      console.log(this.patientID);
+    },
     // -------Add user-------------
     add() {
       this.dialogAddSurgery = true;
@@ -853,40 +1017,44 @@ export default {
     },
     changeStatus(item) {
       this.dialog = true;
+      this.statusChangingByClick = item;
+      console.log("???????????");
+      console.log(this.statusChangingByClick);
+      console.log("???????????");
       this.itemWithStatusToBeUpdated = item;
     },
     updateStatusCode() {
       if (this.statusItem == "Patient checked In") {
         this.testStates = [
-          { name: "Surgery Scheduled", current: "" },
-          { name: "Patient checked In", current: "true" },
-          { name: "Patient in Surgery", current: "" },
-          { name: "Patient Post Surgery", current: "" },
-          { name: "Patient Discharged", current: "" },
+          { name: "Surgery Scheduled", current: "", value: 0 },
+          { name: "Patient checked In", current: "true", value: 1 },
+          { name: "Patient in Surgery", current: "", value: 2 },
+          { name: "Patient Post Surgery", current: "", value: 2 },
+          { name: "Patient Discharged", current: "", value: 2 },
         ];
       } else if (this.statusItem == "Patient in Surgery") {
         this.testStates = [
-          { name: "Surgery Scheduled", current: "" },
-          { name: "Patient checked In", current: "" },
-          { name: "Patient in Surgery", current: "true" },
-          { name: "Patient Post Surgery", current: "" },
-          { name: "Patient Discharged", current: "" },
+          { name: "Surgery Scheduled", current: "", value: 0 },
+          { name: "Patient checked In", current: "", value: 0 },
+          { name: "Patient in Surgery", current: "true", value: 1 },
+          { name: "Patient Post Surgery", current: "", value: 2 },
+          { name: "Patient Discharged", current: "", value: 2 },
         ];
       } else if (this.statusItem == "Patient Post Surgery") {
         this.testStates = [
-          { name: "Surgery Scheduled", current: "" },
-          { name: "Patient checked In", current: "" },
-          { name: "Patient in Surgery", current: "" },
-          { name: "Patient Post Surgery", current: "true" },
-          { name: "Patient Discharged", current: "" },
+          { name: "Surgery Scheduled", current: "", value: 0 },
+          { name: "Patient checked In", current: "", value: 0 },
+          { name: "Patient in Surgery", current: "", value: 0 },
+          { name: "Patient Post Surgery", current: "true", value: 1 },
+          { name: "Patient Discharged", current: "", value: 2 },
         ];
       } else if (this.statusItem == "Patient Discharged") {
         this.testStates = [
-          { name: "Surgery Scheduled", current: "" },
-          { name: "Patient checked In", current: "" },
-          { name: "Patient in Surgery", current: "" },
-          { name: "Patient Post Surgery", current: "" },
-          { name: "Patient Discharged", current: "true" },
+          { name: "Surgery Scheduled", current: "", value: 0 },
+          { name: "Patient checked In", current: "", value: 0 },
+          { name: "Patient in Surgery", current: "", value: 0 },
+          { name: "Patient Post Surgery", current: "", value: 0 },
+          { name: "Patient Discharged", current: "true", value: 1 },
         ];
       }
 

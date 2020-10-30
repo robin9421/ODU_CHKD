@@ -2,7 +2,15 @@ var mongoose = require('mongoose');
 
 
 var userSchema = new mongoose.Schema({
-    name: {
+    firstname: {
+        type: String,
+        required: true
+    },
+    lastname: {
+        type: String,
+        required: true
+    },
+    patientPhone: {
         type: String,
         required: true
     },
@@ -11,10 +19,6 @@ var userSchema = new mongoose.Schema({
         required: true
     },
     password: {
-        type: String,
-        required: true
-    },
-    age: {
         type: String,
         required: true
     },

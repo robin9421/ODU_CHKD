@@ -43,8 +43,11 @@
             </v-card>
           </v-menu>
           <v-divider
+            class="dividerClass"
             :key="`d${stateIndex}`"
             v-if="stateIndex < states.length - 1"
+            :complete="stateIndex <= currentIndex"
+            :color=" stateIndex > currentIndex -1 ? currentDividerColor : previousDividerColor"
           />
         </template>
       </v-stepper-header>
@@ -56,12 +59,15 @@
 export default {
   computed: {
     currentIndex() {
+      console.log(this.states.findIndex((state) => state.current))
       return this.states.findIndex((state) => state.current);
     },
   },
   name: "HVStateStepper",
   props: {
     currentColor: String,
+    previousDividerColor: String,
+    currentDividerColor: String,
     currentIcon: String,
     previousColor: String,
     previousIcon: String,
@@ -79,7 +85,9 @@ export default {
   padding: 20px 0 !important;
 }
 
-.hv-state-stepper .v-stepper__header .v-divider {
-  margin: 32px -60px 0;
+.hv-state-stepper .v-stepper__header .dividerClass {
+  margin: 31px -58px 0;
+  color: darkgray;
+  border-width: 2px;
 }
 </style>

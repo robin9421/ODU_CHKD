@@ -1,6 +1,8 @@
 // Container
 import MainContainer from '../container/MainContainer';
 
+import store from '../store/index.js'
+
 // Views
 import Profile from '../views/user/profile'
 import AddUser from '../views/user/addUser'
@@ -11,6 +13,7 @@ import Change from '../views/user/changePass'
 import EditSurgery from '../views/user/editSurgery'
 import demo from '../views/user/demo'
 import userStatusCheck from '../views/user/userStatusCheck'
+import surgeryTypes from '../views/user/surgeryTypes'
 
 export default {
     path: '/user',
@@ -51,8 +54,23 @@ export default {
                     path: '/user/profile/userStatusCheck',
                     component: userStatusCheck
                 },
+                {
+                    path: '/user/profile/surgeryTypes',
+                    component: surgeryTypes
+                },
             ]
         },
 
-    ]
+    ],
+    meta: {
+        requireAuth: true
+    },
+    beforeEnter: (to, from, next) => {
+        const requiresAuth = to.matched.some(record => record.meta.requireAuth);
+        if (requiresAuth && store.state.auth.token) {
+            next();
+        } else {
+            next('/auth');
+        }
+    }
 }

@@ -94,6 +94,21 @@ router.get('/getSurgery/:id', (req, res, next) => {
     });
 })
 
+router.get('/getPatient/:id', (req, res, next) => {
+    User.findOne({ patientID: req.params.id }).then((patient) => {
+        if (!patient) {
+            throw new Error('no user with that id')
+        }
+        res.status(200).json(patient)
+        console.log(patient)
+    }).catch((err) => {
+        console.log("+++++++")
+        console.log(err)
+        console.log("______")
+        res.status(400).json({ error: err })
+    });
+})
+
 router.post('/getSurgery/:id', (req, res, next) => {
     Surgery.updateOne({ _id: req.params.id }, req.body).then(surgery => {
         res.status(200).json(surgery)

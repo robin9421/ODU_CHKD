@@ -103,6 +103,13 @@
         <v-container v-if="user == 'Pre Op Coordinator'">
           <v-row justify="center">
             <v-col>
+            <v-btn text to="/user/profile/surgeryTypes"
+            >Surgery Types<span style="margin-left: 5px" left>
+              <v-icon>mdi-format-list-bulleted-type</v-icon>
+            </span></v-btn
+          >
+            </v-col>
+            <v-col>
               <v-menu offset-y>
                 <template v-slot:activator="{ on, attrs }">
                   <v-icon

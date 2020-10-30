@@ -113,7 +113,7 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="6">
-                        <v-subheader :inset="inset"> State Guide </v-subheader>
+                        <v-subheader> State Guide </v-subheader>
                         <v-divider></v-divider>
 
                         <v-list>
@@ -122,7 +122,7 @@
                               <v-icon
                                 color="white"
                                 style="
-                                  background-color: mediumseagreen;
+                                  background-color: dodgerblue;
                                   padding: 2px;
                                   border-radius: 20px;
                                 "
@@ -141,7 +141,7 @@
                               <v-icon
                                 color="white"
                                 style="
-                                  background-color: dodgerblue;
+                                  background-color: mediumseagreen;
                                   padding: 2px;
                                   border-radius: 20px;
                                 "
@@ -180,9 +180,11 @@
                       <v-col cols="12" md="12">
                         <HVStateStepper
                           :states="item.status"
-                          current-color="green"
+                          current-color="blue"
                           current-icon="mdi-bullseye"
-                          previous-color="blue"
+                          current-divider-color="darkgray"
+                          previous-divider-color="mediumseagreen"
+                          previous-color="green"
                           previous-icon="mdi-checkbox-marked-circle-outline"
                         />
                       </v-col>
